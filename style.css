@@ -4,9 +4,12 @@ body {
   text-align: center;
 }
 
+.header-title {
+    font-weight: bold;
+}
 .title {
-    padding: 0 30px;
     word-break: keep-all;
+    margin-top: 5px;
 }
 
 .user-info-wrapper {
