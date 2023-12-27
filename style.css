@@ -4,6 +4,11 @@ body {
   text-align: center;
 }
 
+.title {
+    padding: 0 30px;
+    word-break: keep-all;
+}
+
 .user-info-wrapper {
   display: flex;
   flex-wrap: wrap;
