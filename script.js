@@ -38,20 +38,24 @@ const users = [
 ];
 
 async function loadData() {
+  const spinner = `<div class="loader"></div>`;
+
   const dataWrapper = document.querySelector(".user-info-wrapper");
 
   let totalFine = 0;
 
   for (const user of users) {
+    dataWrapper.innerHTML += `<div class="user-info">${spinner}</div>`;
     const userData = await getUserData(user);
-    dataWrapper.innerHTML += `<div class="user-info">
-    <h3 class="name">${user.name}</h3>
+    dataWrapper.innerHTML = dataWrapper.innerHTML.replace(
+      spinner,
+      `<h3 class="name">${user.name}</h3>
         <a class="id" href="https://github.com/${user.id}" target="_blank"><img src="./github.svg">${user.id}</a>
         <div class="startDate">${user.startDate.replaceAll("-", ".")} ~ </div>
         <img src="https://contribution.catsjuice.com/_/${user.id}?chart=3dbar&gap=0.6&scale=2&flatten=1&format=png&quality=1&weeks=${calculateWeeksBetween(user.startDate)}&theme=green&widget_size=large">
         <div class="score">${userData.score}점</div>
-        <div class="money">${formatNumberWithCommas(userData.fine)}₩</div>
-    </div>`;
+        <div class="money">${formatNumberWithCommas(userData.fine)}₩</div>`
+    );
 
     totalFine += userData.fine;
   }
