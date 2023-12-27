@@ -7,7 +7,7 @@ const users = [
     startDate: "2023-09-20",
   },
   {
-  name: "이지원",
+    name: "이지원",
     id: "Rudolf0328",
     startDate: "2023-11-20",
   },
@@ -42,7 +42,6 @@ async function loadData() {
 
   let totalFine = 0;
 
-
   for (const user of users) {
     const userData = await getUserData(user);
     dataWrapper.innerHTML += `<div class="user-info">
@@ -58,6 +57,7 @@ async function loadData() {
   }
 
   document.querySelector(".total-fine").innerHTML = formatNumberWithCommas(totalFine) + " ₩";
+  document.querySelector(".current-date").innerHTML += `기준일 ${today.replaceAll("-", ".")}`;
 }
 
 async function getUserData(user) {
@@ -82,7 +82,7 @@ async function getUserData(user) {
 
 function calculatePercentage(contributions) {
   const totalDays = contributions.length;
-  if(totalDays == 0) {
+  if (totalDays == 0) {
     return "[ERROR]";
   }
   const countGreaterThanZero = contributions.filter((contribution) => contribution.count > 0).length;
@@ -93,7 +93,7 @@ function calculatePercentage(contributions) {
 function formatDate(date) {
   const year = date.getFullYear();
   const month = ("0" + (date.getMonth() + 1)).slice(-2);
-  const day = ("0" + date.getDate()).slice(-2);
+  const day = ("0" + (date.getDate() - 1)).slice(-2);
   return `${year}-${month}-${day}`;
 }
 
