@@ -4,9 +4,9 @@ const users = [
   {
     name: "박현호",
     id: "laniel88",
-    startDate: "2023-12-22",
+    startDate: "2023-12-26",
     paid: 0,
-    timeoff: ["2023-12-20"],
+    timeoff: ["2024-01-01"],
   },
   {
     name: "이지원",
@@ -64,7 +64,7 @@ async function loadData() {
     dataWrapper.innerHTML = dataWrapper.innerHTML.replace(
       spinner,
       `<h3 class="name">${user.name}</h3>
-        <a class="id" href="https://github.com/${user.id}" target="_blank"><img src="./github.svg">${user.id}</a>
+        <a class="id" href="https://github.com/${user.id}" target="_blank"><img src="./assets/github.svg">${user.id}</a>
         <div class="startDate">${user.startDate.replaceAll("-", ".")} ~ </div>
         <img src="https://contribution.catsjuice.com/_/${user.id}?chart=3dbar&gap=0.6&scale=2&flatten=1&format=png&quality=1&weeks=${calculateWeeksBetween(user.startDate)}&theme=green&widget_size=large">
         <div class="score">${userData.score}점</div>
@@ -96,15 +96,17 @@ async function loadData() {
 
   document.querySelector(".total-fine").innerHTML = "₩" + formatNumberWithCommas(totalFine);
 
-  document.querySelector("#toggleSubInfo").style.display = "initial";
+  const buttonElements = document.querySelectorAll(".main-button");
+  buttonElements.forEach(function(subInfo) {
+    subInfo.style.display = 'initial';
+  });
 }
+
 
 async function getUserData(user) {
   try {
     const response = await fetch(`https://github-contributions-api.jogruber.de/v4/${user.id}`);
     const data = await response.json();
-
-    console.log(user.startDate);
 
     const filteredData = data.contributions.filter((contribution) => {
       return contribution.date >= user.startDate && contribution.date <= today;

@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>2023 EOS 겨울방학 잔디심기 스터디</title>
-    <link rel="icon" type="image/x-icon" href="./logo.png" />
+    <link rel="icon" type="image/x-icon" href="./assets/logo.png" />
     <link rel="stylesheet" href="./style.css" />
   </head>
   <body>
@@ -16,9 +16,24 @@
       <div class="total-fine-title">총 수익금</div>
       <div class="total-fine">계산 중..</div>
     </div>
-    <button id="toggleSubInfo" onclick="toggleSubInfo()" style="display: none">세부 정보 열기/닫기</button>
-    <div class="user-info-wrapper"></div>
 
+    <div class="tabs">
+      <div class="tab">
+        <label for="tab1">채점 현황</label>
+        <input id="tab1" name="tabs-two" type="radio" checked="checked" />
+        <div>
+          <button id="toggleSubInfo" class="main-button" onclick="toggleSubInfo()" style="display: none">세부 정보 열기/닫기</button>
+          <div class="user-info-wrapper"></div>
+        </div>
+      </div>
+      <div class="tab">
+        <label for="tab2">규정 및 안내</label>
+        <input id="tab2" name="tabs-two" type="radio" />
+        <div>
+          <iframe id="manualFrame" src="./manual/index.html"></iframe>
+        </div>
+      </div>
+    </div>
     <div class="footer">
       <div class="phh">박현호 제작</div>
       <br />
