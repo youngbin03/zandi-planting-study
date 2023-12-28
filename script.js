@@ -97,11 +97,10 @@ async function loadData() {
   document.querySelector(".total-fine").innerHTML = "₩" + formatNumberWithCommas(totalFine);
 
   const buttonElements = document.querySelectorAll(".main-button");
-  buttonElements.forEach(function(subInfo) {
-    subInfo.style.display = 'initial';
+  buttonElements.forEach(function (subInfo) {
+    subInfo.style.display = "initial";
   });
 }
-
 
 async function getUserData(user) {
   try {
@@ -176,11 +175,9 @@ function formatNumberWithCommas(number) {
 
 loadData();
 
-
-
 function toggleSubInfo() {
-  var subInfoElements = document.querySelectorAll('.sub-info');
-  subInfoElements.forEach(function(subInfo) {
-    subInfo.style.display = (subInfo.style.display === 'none') ? 'block' : 'none';
+  var subInfoElements = document.querySelectorAll(".sub-info");
+  subInfoElements.forEach(function (subInfo) {
+    subInfo.style.display = subInfo.style.display === "none" ? "block" : "none";
   });
 }

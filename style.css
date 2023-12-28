@@ -1,6 +1,8 @@
+@import "notion.css";
+
 body {
   font-family: Arial, sans-serif;
-  margin: 50px auto;
+  margin: 50px 0;
   text-align: center;
 }
 
@@ -207,13 +209,15 @@ select:focus {
 .tabs [class^="tab"] [type="radio"],
 .tabs [class*=" tab"] [type="radio"] {
   color: rgba(189, 189, 189, 0.732);
+  width: 100%;
+  height: 0;
+  border-radius: 0;
   border-bottom: 2px solid rgba(189, 189, 189, 0.732);
   cursor: pointer;
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
   display: block;
-  width: 100%;
   -webkit-transition: all 0.3s ease-in-out;
   -moz-transition: all 0.3s ease-in-out;
   -o-transition: all 0.3s ease-in-out;
@@ -271,10 +275,4 @@ select:focus {
 
 .tab:has([type="radio"]:checked) {
   z-index: 2;
-}
-
-#manualFrame {
-  width: 100%;
-  border: none;
-  height: 3100px;
 }
