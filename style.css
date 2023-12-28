@@ -196,6 +196,13 @@ select:focus {
   padding: 0 10%;
   overflow: hidden;
 }
+
+@media (max-width: 480px) {
+  .tabs {
+    padding: 0 5%;
+  }
+}
+
 .tabs [class^="tab"] label,
 .tabs [class*=" tab"] label {
   color: #000000;
