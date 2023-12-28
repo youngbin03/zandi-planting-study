@@ -4,40 +4,54 @@ const users = [
   {
     name: "박현호",
     id: "laniel88",
-    startDate: "2023-09-20",
+    startDate: "2023-12-22",
+    paid: 0,
+    timeoff: ["2023-12-20"],
   },
   {
     name: "이지원",
     id: "Rudolf0328",
-    startDate: "2023-11-20",
+    startDate: "2023-12-20",
+    paid: 0,
+    timeoff: ["2023-12-01"],
   },
 
   {
     name: "인범진",
     id: "Ben9960",
     startDate: "2023-10-03",
+    paid: 0,
+    timeoff: ["2023-10-11", "2023-10-15"],
   },
 
   {
     name: "서민용",
     id: "tjalsdyd2121",
     startDate: "2023-10-06",
+    paid: 0,
+    timeoff: ["2023-11-21"],
   },
 
   {
     name: "박준서",
     id: "bjsbest",
     startDate: "2023-10-20",
+    paid: 0,
+    timeoff: [],
   },
 
   {
     name: "홍바다",
     id: "BadaHong",
     startDate: "2023-10-01",
+    paid: 0,
+    timeoff: ["2023-11-21", "2023-01-21", "2023-01-21", "2023-01-21"],
   },
 ];
 
 async function loadData() {
+  document.querySelector(".subtitle").innerHTML = `기준일 ${today.replaceAll("-", ".")}&nbsp;&nbsp;&nbsp;` + document.querySelector(".subtitle").innerHTML;
+
   const spinner = `<div class="loader"></div>`;
 
   const dataWrapper = document.querySelector(".user-info-wrapper");
@@ -54,14 +68,35 @@ async function loadData() {
         <div class="startDate">${user.startDate.replaceAll("-", ".")} ~ </div>
         <img src="https://contribution.catsjuice.com/_/${user.id}?chart=3dbar&gap=0.6&scale=2&flatten=1&format=png&quality=1&weeks=${calculateWeeksBetween(user.startDate)}&theme=green&widget_size=large">
         <div class="score">${userData.score}점</div>
-        <div class="money">${formatNumberWithCommas(userData.fine)}₩</div>`
+        <div class="money">₩${formatNumberWithCommas(userData.fine)}</div>
+        <div class="sub-info" style="display: none;"><table>
+        <tr>
+            <th>누적벌금</th>
+            <td>₩${formatNumberWithCommas(userData.fine)}</td>
+        </tr>
+        <tr>
+            <th>납부벌금</th>
+            <td>₩${formatNumberWithCommas(user.paid)}</td>
+        </tr>
+        <tr>
+            <th>미납벌금</th>
+            <td>₩${formatNumberWithCommas(userData.fine - user.paid)}</td>
+        </tr>
+        <tr>
+            <th>휴식일</th>
+            <td>${user.timeoff.join(", ").replaceAll("-", ".")}</td>
+        </tr>
+    </table>
+        </div>
+        `
     );
 
     totalFine += userData.fine;
   }
 
-  document.querySelector(".total-fine").innerHTML = formatNumberWithCommas(totalFine) + " ₩";
-  document.querySelector(".current-date").innerHTML += `기준일 ${today.replaceAll("-", ".")}`;
+  document.querySelector(".total-fine").innerHTML = "₩" + formatNumberWithCommas(totalFine);
+
+  document.querySelector("#toggleSubInfo").style.display = "initial";
 }
 
 async function getUserData(user) {
@@ -75,8 +110,8 @@ async function getUserData(user) {
       return contribution.date >= user.startDate && contribution.date <= today;
     });
 
-    const score = calculatePercentage(filteredData);
-    const fine = calculateFine(filteredData);
+    const score = calculatePercentage(filteredData, user.timeoff);
+    const fine = calculateFine(filteredData, user.timeoff);
     return { score: score, fine: fine };
   } catch (error) {
     console.error("Error fetching data:", error);
@@ -84,12 +119,12 @@ async function getUserData(user) {
   }
 }
 
-function calculatePercentage(contributions) {
+function calculatePercentage(contributions, timeoff) {
   const totalDays = contributions.length;
   if (totalDays == 0) {
     return "[ERROR]";
   }
-  const countGreaterThanZero = contributions.filter((contribution) => contribution.count > 0).length;
+  const countGreaterThanZero = contributions.filter((contribution) => contribution.count > 0 || timeoff.includes(contribution.date)).length;
   const percentage = (countGreaterThanZero / totalDays) * 100;
   return percentage.toFixed(0);
 }
@@ -112,12 +147,12 @@ function calculateWeeksBetween(startDate) {
   return weeks < 1 ? 1 : weeks;
 }
 
-function calculateFine(filteredData) {
+function calculateFine(filteredData, timeoff) {
   let fine = 0;
   let consecutiveZeroDays = 0;
 
   for (const contribution of filteredData) {
-    if (contribution.count === 0) {
+    if (contribution.count === 0 && !timeoff.includes(contribution.date)) {
       consecutiveZeroDays++;
     } else {
       // Reset consecutiveZeroDays if count is not 0
@@ -138,3 +173,12 @@ function formatNumberWithCommas(number) {
 }
 
 loadData();
+
+
+
+function toggleSubInfo() {
+  var subInfoElements = document.querySelectorAll('.sub-info');
+  subInfoElements.forEach(function(subInfo) {
+    subInfo.style.display = (subInfo.style.display === 'none') ? 'block' : 'none';
+  });
+}
