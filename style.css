@@ -28,6 +28,16 @@ body {
   color: #4d4d4d;
 }
 
+.description {
+  font-size: 0.8em;
+  color: gray;
+  text-align: start;
+  margin-top: 20px;
+  display: inline-block;
+  align-self: center;
+  line-height: 1.2;
+}
+
 .main-button {
   align-items: center;
   background-color: #fff;
@@ -86,33 +96,82 @@ body {
   align-items: center;
 }
 
+.name-wrapper {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  transform: translateX(-0.3em);
+}
+
+.name-wrapper img.avatar {
+  height: 1.7em;
+  width: 1.7em;
+  margin: auto 5px auto auto;
+  border-radius: 50%;
+  filter: grayscale(0.5);
+  /* display: none; */
+}
+
 .name {
   color: #333;
-  font-size: 1.2em;
-  margin-bottom: 8px;
+  font-size: 1.4em;
+  margin-top: 0.5em;
+  padding-bottom: 0.15em;
+  margin-bottom: 3px;
+}
+
+hr.divider {
+  background: transparent;
+  display: block;
+  width: 100%;
+  visibility: visible;
+  margin: 7px;
+  border: none;
+  border-bottom: 1.2px solid rgba(29, 28, 28, 0.363);
 }
 
 .id {
   color: black;
+  filter: opacity(0.6);
   text-decoration: none;
   display: inline-flex;
+  font-size: 0.9em;
+  padding-right: 7px;
 }
 
 .id img {
-  height: 16px;
-  width: 16px;
+  margin-top: 1px;
+  height: 14px;
+  width: 14px;
   margin-right: 5px;
 }
 
 .id:hover {
-  filter: opacity(0.4);
+  filter: opacity(1);
 }
 
-img {
-  max-width: 400px;
+.start-date {
+  font-size: 0.8em;
+  color: gray;
+  margin-top: 4px;
+}
+
+object.zandi {
   height: 130px;
   border-radius: 4px;
-  margin-bottom: 12px;
+  margin: 8px 0 12px 0;
+}
+
+.spacer {
+  height: 150px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.spacer img {
+  height: 70px;
+  filter: opacity(0.65);
 }
 
 .score {
@@ -148,9 +207,11 @@ th {
 
 td {
   padding: 0 8px;
+  min-width: 2em;
 }
 .footer {
   margin: 50px 10%;
+  margin-top: 10px;
   padding-top: 10px;
   border-top: 1px dashed black;
   font-size: 0.8em;
@@ -248,7 +309,7 @@ select:focus {
 .tabs [class*=" tab"] [type="radio"] + div {
   display: block;
   opacity: 0;
-  padding: 2rem 0;
+  padding: 1rem 0;
   width: 90%;
   -webkit-transition: all 0.3s ease-in-out;
   -moz-transition: all 0.3s ease-in-out;

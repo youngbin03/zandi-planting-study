@@ -1,56 +1,11 @@
-const today = formatDate(new Date());
+const today = new Date();
+const yesterday = new Date(today);
+yesterday.setDate(today.getDate() - 1);
+const targetDay = formatDate(yesterday);
 
-const users = [
-  {
-    name: "박현호",
-    id: "laniel88",
-    startDate: "2023-12-26",
-    paid: 0,
-    timeoff: ["2024-01-01"],
-  },
-  {
-    name: "이지원",
-    id: "Rudolf0328",
-    startDate: "2023-12-20",
-    paid: 0,
-    timeoff: ["2023-12-01"],
-  },
-
-  {
-    name: "인범진",
-    id: "Ben9960",
-    startDate: "2023-10-03",
-    paid: 0,
-    timeoff: ["2023-10-11", "2023-10-15"],
-  },
-
-  {
-    name: "서민용",
-    id: "tjalsdyd2121",
-    startDate: "2023-10-06",
-    paid: 0,
-    timeoff: ["2023-11-21"],
-  },
-
-  {
-    name: "박준서",
-    id: "bjsbest",
-    startDate: "2023-10-20",
-    paid: 0,
-    timeoff: [],
-  },
-
-  {
-    name: "홍바다",
-    id: "BadaHong",
-    startDate: "2023-10-01",
-    paid: 0,
-    timeoff: ["2023-11-21", "2023-01-21", "2023-01-21", "2023-01-21"],
-  },
-];
-
+// https://ssr-contributions-svg.vercel.app/_/maschad?chart=3dbar&gap=0.6&scale=2&flatten=0&animation=fall&animation_duration=1&animation_delay=0.1&weeks=30&theme=green
 async function loadData() {
-  document.querySelector(".subtitle").innerHTML = `기준일 ${today.replaceAll("-", ".")}&nbsp;&nbsp;&nbsp;` + document.querySelector(".subtitle").innerHTML;
+  document.querySelector(".subtitle").innerHTML = `기준일 ${targetDay.replaceAll("-", ".")}&nbsp;&nbsp;&nbsp;` + document.querySelector(".subtitle").innerHTML;
 
   const spinner = `<div class="loader"></div>`;
 
@@ -59,14 +14,26 @@ async function loadData() {
   let totalFine = 0;
 
   for (const user of users) {
-    dataWrapper.innerHTML += `<div class="user-info">${spinner}</div>`;
+    var loader = document.createElement("div");
+    loader.className = "user-info";
+    loader.id = `user-${user.id}`;
+    loader.innerHTML = spinner;
+    dataWrapper.appendChild(loader);
     const userData = await getUserData(user);
-    dataWrapper.innerHTML = dataWrapper.innerHTML.replace(
-      spinner,
-      `<h3 class="name">${user.name}</h3>
-        <a class="id" href="https://github.com/${user.id}" target="_blank"><img src="./assets/github.svg">${user.id}</a>
-        <div class="startDate">${user.startDate.replaceAll("-", ".")} ~ </div>
-        <img src="https://contribution.catsjuice.com/_/${user.id}?chart=3dbar&gap=0.6&scale=2&flatten=1&format=png&quality=1&weeks=${calculateWeeksBetween(user.startDate)}&theme=green&widget_size=large">
+
+    loader.innerHTML = `<div class="name-wrapper"><img class="avatar" src="https://avatars.githubusercontent.com/${user.id}"><h3 class="name">${user.name}</h3></div> 
+        <hr class="divider"/>
+      <a class="id" href="https://github.com/${user.id}" target="_blank"><img src="./assets/github.svg">${user.id}</a>
+        <div class="start-date">${user.startDate.replaceAll("-", ".")} ~ ${userData.score != 0 ? targetDay.replaceAll("-", "."): ''}</div>
+        <object 
+          class="zandi" 
+          ${userData.score == 0 ? 'style="display:none;"' : ""}
+          type="image/svg+xml"
+          data="https://ssr-contributions-svg.vercel.app/_/${user.id}?chart=3dbar&gap=0.6&scale=2&flatten=0&format=svg&quality=1&weeks=${calculateWeeksBetween(
+      user.startDate
+    )}&theme=green&widget_size=large&animation=fall&animation_duration=1&animation_delay=0.1" 
+        ></object>
+        ${userData.score == 0 ? '<div class="spacer"><img src="./assets/toy.svg"></div>' : ""}
         <div class="score">${userData.score}점</div>
         <div class="money">₩${formatNumberWithCommas(userData.fine)}</div>
         <div class="sub-info" style="display: none;"><table>
@@ -84,12 +51,11 @@ async function loadData() {
         </tr>
         <tr>
             <th>휴식일</th>
-            <td>${user.timeoff.join(", ").replaceAll("-", ".")}</td>
+            <td>${generateDateInformation(user.timeoff)}</td>
         </tr>
     </table>
         </div>
-        `
-    );
+        `;
 
     totalFine += userData.fine;
   }
@@ -108,7 +74,7 @@ async function getUserData(user) {
     const data = await response.json();
 
     const filteredData = data.contributions.filter((contribution) => {
-      return contribution.date >= user.startDate && contribution.date <= today;
+      return contribution.date >= user.startDate && contribution.date <= targetDay;
     });
 
     const score = calculatePercentage(filteredData, user.timeoff);
@@ -123,7 +89,7 @@ async function getUserData(user) {
 function calculatePercentage(contributions, timeoff) {
   const totalDays = contributions.length;
   if (totalDays == 0) {
-    return "[ERROR]";
+    return 0;
   }
   const countGreaterThanZero = contributions.filter((contribution) => contribution.count > 0 || timeoff.includes(contribution.date)).length;
   const percentage = (countGreaterThanZero / totalDays) * 100;
@@ -133,18 +99,21 @@ function calculatePercentage(contributions, timeoff) {
 function formatDate(date) {
   const year = date.getFullYear();
   const month = ("0" + (date.getMonth() + 1)).slice(-2);
-  const day = ("0" + (date.getDate() - 1)).slice(-2);
+  const day = ("0" + date.getDate()).slice(-2);
   return `${year}-${month}-${day}`;
 }
 
 function calculateWeeksBetween(startDate) {
   const oneDay = 24 * 60 * 60 * 1000; // One day in milliseconds
-  const startDateTime = new Date(startDate).getTime();
-  const todayDateTime = new Date().getTime();
+  const startDateTime = new Date(startDate);
+  const todayDateTime = new Date();
 
-  const timeDifference = todayDateTime - startDateTime;
-  const weeks = Math.floor(timeDifference / (7 * oneDay));
+  const timeDifference = todayDateTime.getTime() - startDateTime.getTime();
+  var weeks = Math.ceil(timeDifference / (7 * oneDay));
 
+  if (startDateTime.getDay() >= todayDateTime.getDay() && timeDifference % (7 * oneDay) > oneDay) {
+    weeks++;
+  }
   return weeks < 1 ? 1 : weeks;
 }
 
@@ -162,7 +131,8 @@ function calculateFine(filteredData, timeoff) {
 
     // Calculate fine based on consecutiveZeroDays using power of 2
     if (consecutiveZeroDays > 0) {
-      fine += Math.pow(2, consecutiveZeroDays - 1) * 1000;
+      let temp = Math.pow(2, consecutiveZeroDays - 1) * 1000
+      fine += temp > 8000 ? 8000 : temp;
     }
   }
 
@@ -171,6 +141,50 @@ function calculateFine(filteredData, timeoff) {
 
 function formatNumberWithCommas(number) {
   return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
+function generateDateInformation(dateArray) {
+  if (!Array.isArray(dateArray) || dateArray.length === 0) {
+    return "-";
+  }
+
+  // Convert date strings to Date objects
+  const dates = dateArray.map((dateString) => new Date(dateString));
+
+  // Helper function to format dates as "YYYY.MM.DD"
+  const formatDate = (date) => {
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, "0");
+    const day = date.getDate().toString().padStart(2, "0");
+    return `${year}.${month}.${day}`;
+  };
+
+  // Generate the date information string
+  let result = formatDate(dates[0]);
+  let currentRange = [dates[0]];
+
+  for (let i = 1; i < dates.length; i++) {
+    const prevDate = dates[i - 1];
+    const currentDate = dates[i];
+
+    // Check if the current date is consecutive to the previous date
+    const isConsecutive = (currentDate - prevDate) / (24 * 60 * 60 * 1000) === 1;
+
+    if (!isConsecutive) {
+      // If not consecutive, close the current range and start a new one
+      result += currentRange.length > 1 ? ` ~ ${formatDate(currentRange[currentRange.length - 1])}, ` : `, `;
+      result += formatDate(currentDate);
+      currentRange = [currentDate];
+    } else {
+      // If consecutive, add the current date to the current range
+      currentRange.push(currentDate);
+    }
+  }
+
+  // Close the last range
+  result += currentRange.length > 1 ? ` ~ ${formatDate(currentRange[currentRange.length - 1])}` : "";
+
+  return result;
 }
 
 loadData();
