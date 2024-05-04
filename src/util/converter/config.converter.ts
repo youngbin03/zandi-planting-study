@@ -16,7 +16,7 @@ export class ConfigConverter {
         }
     }
 
-    static toUser(dto: UserInfoDto, globalStartDate : Date): UserInfo {
+    static toUser(dto: UserInfoDto, globalStartDate: Date): UserInfo {
         const startDate = globalStartDate.getTime() > new Date(dto.startDate).getTime() ? globalStartDate : new Date(dto.startDate)
         return {
             name: dto.name,

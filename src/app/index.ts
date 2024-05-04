@@ -11,4 +11,4 @@ async function main(): Promise<void> {
     initializeButtons()
 }
 
-main().then((_) => console.log("Loaded page successfully")).catch(e => console.error(e));
+main().then((_) => console.log("Loaded page successfully")).catch(e => console.error(e))

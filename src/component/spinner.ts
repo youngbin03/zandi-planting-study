@@ -1,4 +1,4 @@
-export function createUserBoxLoader() : HTMLElement{
+export function createUserBoxLoader(): HTMLElement {
     const mockUserBox = document.createElement("div")
     mockUserBox.className = "user-info"
 

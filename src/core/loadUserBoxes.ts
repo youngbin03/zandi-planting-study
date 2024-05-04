@@ -5,7 +5,7 @@ import {getUserStatus} from "../util/userStatus";
 import {createUserBox} from "../component/userBox";
 
 
-export async function loadUserBoxes() : Promise<void> {
+export async function loadUserBoxes(): Promise<void> {
     let totalFine = 0
     const countUp = new CountUp("totalFine", totalFine)
 
