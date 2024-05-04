@@ -7,7 +7,7 @@ export interface ConfigDto {
     title: string;
     icon: string;
     globalStartDate: string;
-    globalDueDate: string | null;
+    globalDueDate?: string;
     users: UserInfoDto[];
     fineFormula: FineFormula;
 }

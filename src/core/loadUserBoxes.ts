@@ -18,7 +18,10 @@ export async function loadUserBoxes(): Promise<void> {
         userBoxWrapper.appendChild(loader)
 
         const userStatus = await getUserStatus(user)
-        if(userStatus == null) continue
+        if(userStatus == null) {
+            loader.remove()
+            continue
+        }
 
         totalFine += userStatus.fine
         countUp.update(totalFine)
