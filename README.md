@@ -86,7 +86,9 @@ const defaultFineFormula: FineFormula = (contributions: Contribution[]) => {
     let consecutiveZeroDays = 0;
 
     for (const contribution of contributions) {
-        if (contribution.count === 0 && contribution.timeout == false) {
+        if(contribution.timeout) continue;
+
+        if (contribution.count === 0) {
             consecutiveZeroDays++;
         } else {
             consecutiveZeroDays = 0;
