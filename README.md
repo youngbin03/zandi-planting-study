@@ -56,6 +56,7 @@ const config: ConfigDto = {
   - 개별 시작일이 기본 시작일(`globalStartDate`)보다 빠를 경우 기본 시작일로 설정됨.
 - `paid` : 회원이 납부한 벌금
 - `timeoff` : 회원의 휴식일 목록
+  - 휴식일은 벌금, 점수 계산에서 제외됨
 
 ### 벌금 공식
 
