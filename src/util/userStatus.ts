@@ -6,14 +6,32 @@ import {ContributionConverter} from "./converter/contribution.converter"
 import {Contribution} from "../interface/contribution"
 import {formatDate} from "./date";
 
+function generateUserHash(user: UserInfo): number {
+    const userRelevantData = {
+        id: user.id,
+        startDate: user.startDate.toISOString(),
+        paid: user.paid,
+        timeoff: user.timeoff.map(date => date.toISOString())
+    };
+    const str = JSON.stringify(userRelevantData);
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) {
+        const char = str.charCodeAt(i);
+        hash = ((hash << 5) - hash) + char;
+        hash |= 0; // Convert to 32bit integer
+    }
+    return hash;
+}
+
 export async function getUserStatus(user: UserInfo): Promise<UserStatus | null> {
-    const cacheKey = `userStatus_${user.id}`;
+    const userHash = generateUserHash(user);
+    const cacheKey = `userStatus_${user.id}_${userHash}`;
     const cachedData = localStorage.getItem(cacheKey);
     const today = formatDate(new Date());
 
     if (cachedData) {
-        const { data, savedDate } = JSON.parse(cachedData);
-        if (savedDate === today && isValidUserStatus(data)) {
+        const { data, savedDate, hash } = JSON.parse(cachedData);
+        if (savedDate === today && hash === userHash && isValidUserStatus(data)) {
             console.log("[UserStatus] Using cached data for user " + user.id)
             return data as UserStatus;
         }
@@ -30,7 +48,7 @@ export async function getUserStatus(user: UserInfo): Promise<UserStatus | null> 
         const fine = cfg.fineFormula(contributions);
         const userStatus = { score: score, fine: fine };
 
-        localStorage.setItem(cacheKey, JSON.stringify({ data: userStatus, savedDate: today }));
+        localStorage.setItem(cacheKey, JSON.stringify({ data: userStatus, savedDate: today, hash: userHash }));
 
         console.log("[UserStatus] Fetched data for user " + user.id)
         return userStatus;
